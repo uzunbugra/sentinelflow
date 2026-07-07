@@ -217,13 +217,13 @@ class TransactionFeatureEngine:
         """
         features: dict[str, float] = {}
 
-        amount = float(tx_data.get("amount", 0.0))
-        sender_iban = tx_data.get("sender_iban", "")
-        receiver_iban = tx_data.get("receiver_iban", "")
-        description = tx_data.get("description", "")
-        sender_city = tx_data.get("sender_city", "")
-        receiver_city = tx_data.get("receiver_city", "")
-        timestamp = self._parse_timestamp(tx_data.get("timestamp", ""))
+        amount = float(tx_data.get("amount") or 0.0)
+        sender_iban = tx_data.get("sender_iban") or ""
+        receiver_iban = tx_data.get("receiver_iban") or ""
+        description = tx_data.get("description") or ""
+        sender_city = tx_data.get("sender_city") or ""
+        receiver_city = tx_data.get("receiver_city") or ""
+        timestamp = self._parse_timestamp(tx_data.get("timestamp") or "")
 
         # =====================================================================
         # 1. Amount Features

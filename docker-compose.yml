@@ -212,6 +212,89 @@ services:
     profiles:
       - monitoring
 
+  # =============================================================================
+  # API SERVER - FastAPI Backend
+  # =============================================================================
+  api-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sentinelflow-api
+    hostname: api-server
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=sentinelflow_secret_2024
+      - POSTGRES_URL=postgresql+asyncpg://sentinelflow:sentinelflow_secret@postgres:5432/sentinelflow
+      - REDIS_URL=redis://redis:6379/0
+      - HMAC_SALT=${HMAC_SALT:-super_secret_salt_for_production}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - sentinelflow-network
+    restart: unless-stopped
+
+  # =============================================================================
+  # KAFKA INGESTOR - Data Processing Worker
+  # =============================================================================
+  kafka-ingestor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sentinelflow-ingestor
+    command: ["python", "-m", "sentinelflow.ingestor.kafka_consumer", "--kafka-servers", "kafka:29092", "--topic", "transactions"]
+    environment:
+      - APP_ENV=production
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=sentinelflow_secret_2024
+      - POSTGRES_URL=postgresql+asyncpg://sentinelflow:sentinelflow_secret@postgres:5432/sentinelflow
+      - REDIS_URL=redis://redis:6379/0
+      - HMAC_SALT=${HMAC_SALT:-super_secret_salt_for_production}
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - sentinelflow-network
+    restart: unless-stopped
+
+  # =============================================================================
+  # FRONTEND - Next.js Dashboard
+  # =============================================================================
+  frontend-dashboard:
+    build:
+      context: ./sentinelflow-web
+      dockerfile: Dockerfile
+    container_name: sentinelflow-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8000
+    depends_on:
+      - api-server
+    networks:
+      - sentinelflow-network
+    restart: unless-stopped
+
 # =============================================================================
 # NETWORKS
 # =============================================================================

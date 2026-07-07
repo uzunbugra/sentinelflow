@@ -16,31 +16,34 @@ function Rings({ data }: { data: RingDatum[] }) {
     }
   })
 
-  let accumulated = 0
+  const ringsData = useMemo(() => {
+    let accumulated = 0
+    return data.map((d, i) => {
+      const fraction = d.value / total
+      const arc = fraction * Math.PI * 2
+      const startAngle = (accumulated / total) * Math.PI * 2
+      accumulated += d.value
+
+      const radius = 1.2 + i * 0.3
+      const color = d.color || "#00f0ff"
+
+      return { ...d, arc, startAngle, radius, color }
+    })
+  }, [data, total])
 
   return (
     <group ref={groupRef}>
-      {data.map((d, i) => {
-        const fraction = d.value / total
-        const arc = fraction * Math.PI * 2
-        const startAngle = (accumulated / total) * Math.PI * 2
-        accumulated += d.value
-
-        const radius = 1.2 + i * 0.3
-        const color = d.color || "#00f0ff"
-
-        return (
-          <RingSegment
-            key={d.label}
-            radius={radius}
-            arc={arc}
-            startAngle={startAngle}
-            color={color}
-            label={d.label}
-            value={d.value}
-          />
-        )
-      })}
+      {ringsData.map((d) => (
+        <RingSegment
+          key={d.label}
+          radius={d.radius}
+          arc={d.arc}
+          startAngle={d.startAngle}
+          color={d.color}
+          label={d.label}
+          value={d.value}
+        />
+      ))}
       <Text position={[0, 0, 0]} fontSize={0.2} color="#8899bb" anchorX="center" anchorY="middle">
         {total}
       </Text>

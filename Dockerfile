@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY pyproject.toml ./
+COPY pyproject.toml README.md ./
 COPY src/ ./src/
 
 RUN pip install --no-cache-dir --upgrade pip && \
@@ -45,6 +45,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Copy wheels from builder
 COPY --from=builder /app/wheels /wheels
+COPY pyproject.toml README.md ./
 COPY --from=builder /app/src ./src
 
 # Install application

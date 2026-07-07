@@ -88,7 +88,7 @@ function TransferArcMesh({ arc, idx }: { arc: TransferArc; idx: number }) {
   const color = isImp ? "#ff4d5e" : isSusp ? "#ffb020" : "#00e5c7"
   const baseOp = isImp ? 0.8 : isSusp ? 0.55 : 0.2
 
-  const lineObj = useMemo(() => {
+  const [lineObj] = useState(() => {
     const pts = curve.getPoints(48)
     const g = new THREE.BufferGeometry().setFromPoints(pts)
     const m = new THREE.LineBasicMaterial({
@@ -97,7 +97,7 @@ function TransferArcMesh({ arc, idx }: { arc: TransferArc; idx: number }) {
       opacity: baseOp,
     })
     return new THREE.Line(g, m)
-  }, [curve, color, baseOp])
+  })
 
   useFrame((state) => {
     const mat = lineObj.material as THREE.LineBasicMaterial

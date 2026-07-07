@@ -28,7 +28,7 @@ export function useWebSocket(url: string = DEFAULT_WS_URL) {
     const reconnectTimeout = useRef<NodeJS.Timeout | undefined>(undefined)
     const maxReconnectAttempts = 10
 
-    const connect = useCallback(() => {
+    const connect = useCallback(function doConnect() {
         if (reconnectAttempts >= maxReconnectAttempts) {
             console.error("Max reconnection attempts reached")
             setStatus("error")
@@ -74,7 +74,7 @@ export function useWebSocket(url: string = DEFAULT_WS_URL) {
                     )
                     console.log(`Reconnecting in ${delay}ms (attempt ${reconnectAttempts + 1})`)
                     setReconnectAttempts((prev) => prev + 1)
-                    reconnectTimeout.current = setTimeout(connect, delay)
+                    reconnectTimeout.current = setTimeout(doConnect, delay)
                 }
             }
 
@@ -87,7 +87,7 @@ export function useWebSocket(url: string = DEFAULT_WS_URL) {
             setStatus("error")
             const delay = config.ui.wsReconnectDelay * Math.pow(2, reconnectAttempts)
             setReconnectAttempts((prev) => prev + 1)
-            reconnectTimeout.current = setTimeout(connect, delay)
+            reconnectTimeout.current = setTimeout(doConnect, delay)
         }
     }, [url, reconnectAttempts])
 

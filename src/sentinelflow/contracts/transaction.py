@@ -40,17 +40,16 @@ class TransactionCreate(ContractBase):
         description="Sender IBAN",
         examples=["TR330006100519786457841326"],
     )
-    sender_name: str = Field(
-        ...,
-        min_length=1,
+    sender_name: str | None = Field(
+        default=None,
         max_length=200,
-        description="Sender full name",
+        description="Sender full name (optional for privacy)",
         examples=["Ahmet Yılmaz"],
     )
-    sender_city: str = Field(
-        default="",
+    sender_city: str | None = Field(
+        default=None,
         max_length=100,
-        description="Sender city",
+        description="Sender city (optional)",
         examples=["İstanbul"],
     )
 
@@ -62,17 +61,16 @@ class TransactionCreate(ContractBase):
         description="Receiver IBAN",
         examples=["TR110006400000468521793064"],
     )
-    receiver_name: str = Field(
-        ...,
-        min_length=1,
+    receiver_name: str | None = Field(
+        default=None,
         max_length=200,
-        description="Receiver full name",
+        description="Receiver full name (optional for privacy)",
         examples=["Mehmet Demir"],
     )
-    receiver_city: str = Field(
-        default="",
+    receiver_city: str | None = Field(
+        default=None,
         max_length=100,
-        description="Receiver city",
+        description="Receiver city (optional)",
         examples=["Ankara"],
     )
 
@@ -88,10 +86,10 @@ class TransactionCreate(ContractBase):
         max_length=3,
         description="Currency code (ISO 4217)",
     )
-    description: str = Field(
-        default="",
+    description: str | None = Field(
+        default=None,
         max_length=500,
-        description="Transaction description/note",
+        description="Transaction description/note (optional)",
         examples=["Kira ödemesi"],
     )
 
@@ -137,14 +135,14 @@ class TransactionSummary(ContractBase):
 
     # Core fields
     sender_iban: str
-    sender_name: str
-    sender_city: str
+    sender_name: str | None = None
+    sender_city: str | None = None
     receiver_iban: str
-    receiver_name: str
-    receiver_city: str
+    receiver_name: str | None = None
+    receiver_city: str | None = None
     amount: float
     currency: str
-    description: str
+    description: str | None = None
     timestamp: datetime
     channel: str = "web"
 

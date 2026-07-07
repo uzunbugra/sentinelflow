@@ -17,11 +17,11 @@ interface Alert {
 function AlertCard({ alert, index, onDismiss }: { alert: Alert; index: number; onDismiss: () => void }) {
   const meshRef = useRef<THREE.Mesh>(null!)
   const [hovered, setHovered] = useState(false)
-  const entryTime = useRef(Date.now())
+  const [entryTime] = useState(() => Date.now())
 
   useFrame((state) => {
     if (!meshRef.current) return
-    const elapsed = (Date.now() - entryTime.current) / 1000
+    const elapsed = (Date.now() - entryTime) / 1000
     // Slide-in animation (first 0.5s)
     if (elapsed < 0.5) {
       const t = elapsed / 0.5

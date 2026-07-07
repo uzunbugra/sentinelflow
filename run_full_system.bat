@@ -3,15 +3,15 @@ echo Starting SentinelFlow FULL SYSTEM (Big Data Mode)...
 
 :: 1. Start Backend (API + WebSocket)
 echo Launching Backend...
-start "SentinelFlow Backend" cmd /k "set PYTHONPATH=%CD%\src && python -m sentinelflow.api.app"
+start "SentinelFlow Backend" cmd /k "set PYTHONPATH=%CD%\src && .\.venv\Scripts\python.exe -m sentinelflow.api.app"
 
 :: 2. Start Kafka Ingestor (Bridge)
 echo Launching Ingestor...
-start "SentinelFlow Kafka Ingestor" cmd /k "set PYTHONPATH=%CD%\src && python src\sentinelflow\ingestor\kafka_consumer.py --kafka-servers localhost:9092 --topic transactions"
+start "SentinelFlow Kafka Ingestor" cmd /k "set PYTHONPATH=%CD%\src && .\.venv\Scripts\python.exe src\sentinelflow\ingestor\kafka_consumer.py --kafka-servers localhost:9092 --topic transactions"
 
-:: 3. Start Kafka Generator (Producer)
-echo Launching Generator...
-start "SentinelFlow Generator" cmd /k "set PYTHONPATH=%CD%\src && python src\sentinelflow\generator\main.py --kafka-servers localhost:9092 --topic transactions --delay 0.1"
+:: 3. Start Real Data Simulator (Bank API Client)
+echo Launching Real Data Simulator...
+start "SentinelFlow Bank API Client" cmd /k "set PYTHONPATH=%CD%\src && .\.venv\Scripts\python.exe scripts\import_real_test_data.py"
 
 :: 4. Start Frontend (Next.js)
 echo Launching Frontend...
