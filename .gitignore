@@ -107,3 +107,6 @@ sentinelflow-web/node_modules/
 
 # opencode (agent config/skills - not project code)
 .opencode/
+
+# macOS
+.DS_Store
